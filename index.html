@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Classifica Operatori Bar</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">THE SPACE • TOOL CASSIERI</div>
+      <h1>Classifica Operatori Bar</h1>
+      <p>Versione web del file Excel/VBA. I dati restano nel browser finché non esporti lo storico JSON.</p>
+    </div>
+    <div class="top-actions">
+      <button id="btnExportHistory" class="secondary">Esporta storico.json</button>
+      <label class="button secondary">Importa storico.json<input id="historyFile" type="file" accept=".json" hidden></label>
+    </div>
+  </header>
+
+  <main>
+    <nav class="tabs">
+      <button class="tab active" data-view="giornata">Giornata</button>
+      <button class="tab" data-view="storico">Classifica storica</button>
+      <button class="tab" data-view="grafici">Grafici</button>
+      <button class="tab" data-view="config">Configurazione</button>
+    </nav>
+
+    <section id="view-giornata" class="view active">
+      <div class="grid two">
+        <article class="card hero-card">
+          <h2>1. Importa Cashier</h2>
+          <p>Carica il file <strong>Cashier Session Reconciliation</strong> (.xls/.xlsx/.xlsm). Il parser replica la logica della macro v15.</p>
+          <label class="dropzone" id="dropzone">
+            <input id="cashierFile" type="file" accept=".xls,.xlsx,.xlsm" hidden>
+            <span class="drop-icon">⇧</span>
+            <strong>Seleziona o trascina il file Cashier</strong>
+            <small id="fileName">Nessun file selezionato</small>
+          </label>
+          <div id="importMessage" class="message hidden"></div>
+        </article>
+
+        <article class="card">
+          <h2>2. Setup giornata</h2>
+          <div class="form-grid">
+            <label>Data<input id="businessDate" type="date"></label>
+            <label>Presenze<input id="presenze" type="number" min="0" step="1" placeholder="es. 802"></label>
+            <label>Scontrini concession<input id="txGiornata" type="number" min="0" step="1"></label>
+            <label>Venduto concession €<input id="vendutoGiornata" type="number" min="0" step="0.01"></label>
+          </div>
+          <div class="kpis compact">
+            <div><span>ATV</span><strong id="kpiATV">—</strong></div>
+            <div><span>Hit Rate</span><strong id="kpiHR">—</strong></div>
+            <div><span>SPP</span><strong id="kpiSPP">—</strong></div>
+          </div>
+        </article>
+      </div>
+
+      <article class="card wide">
+        <div class="section-head">
+          <div><h2>3. Operatori del giorno</h2><p>Inserisci solo le ore. Il bar viene proposto dalla mappa workstation e può essere corretto manualmente.</p></div>
+          <div class="actions">
+            <button id="btnSaveDay" class="primary">Salva / aggiorna nello storico</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="dailyTable">
+            <thead><tr>
+              <th>Operatore</th><th>Workstation</th><th>Bar</th><th>Ore</th><th>Scontrini</th><th>Venduto</th><th>ATV</th><th>Tematici</th><th>Tem./100</th><th>Combo</th><th>Combo/100</th><th>Acque 75</th><th>Vend./h</th><th>Tx/h</th>
+            </tr></thead>
+            <tbody><tr><td colspan="14" class="empty">Importa un file Cashier per iniziare.</td></tr></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section id="view-storico" class="view">
+      <div class="section-head page-head">
+        <div><h2>Classifica storica commerciale</h2><p>Stessa logica v15: qualità scontrino, tematici, volume, combo e continuità.</p></div>
+        <label class="inline-select">Bar<select id="historyBar"><option>Principale</option><option>Secondario</option></select></label>
+      </div>
+      <div class="kpis">
+        <div><span>Righe storico</span><strong id="historyRows">—</strong></div>
+        <div><span>Giornate</span><strong id="historyDays">—</strong></div>
+        <div><span>Operatori</span><strong id="historyOperators">—</strong></div>
+        <div><span>Ultimo giorno</span><strong id="historyLastDay">—</strong></div>
+      </div>
+      <article class="card wide">
+        <div class="table-wrap">
+          <table id="rankingTable">
+            <thead><tr><th>#</th><th>Operatore</th><th>Stato</th><th>Score</th><th>Affid.</th><th>Giorni</th><th>Ore</th><th>Scontrini</th><th>Venduto</th><th>ATV</th><th>Tematici</th><th>Tem./100</th><th>Combo</th><th>Combo/100</th><th>Acque</th><th>Vend./h</th><th>Tx/h</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section id="view-grafici" class="view">
+      <div class="section-head page-head"><div><h2>Andamento operatore</h2><p>Seleziona un operatore per vedere ATV e tematici/100 nel tempo.</p></div><label class="inline-select">Operatore<select id="chartOperator"></select></label></div>
+      <div class="grid two">
+        <article class="card chart-card"><h3>ATV per giornata</h3><canvas id="atvChart"></canvas></article>
+        <article class="card chart-card"><h3>Tematici ogni 100 scontrini</h3><canvas id="temChart"></canvas></article>
+      </div>
+    </section>
+
+    <section id="view-config" class="view">
+      <div class="grid two">
+        <article class="card">
+          <h2>Configurazione</h2>
+          <p>Puoi modificare keyword, mappa workstation, pesi e soglie direttamente nel JSON. Le modifiche vengono salvate solo su questo browser.</p>
+          <textarea id="configEditor" spellcheck="false"></textarea>
+          <div class="actions"><button id="btnSaveConfig" class="primary">Salva configurazione locale</button><button id="btnResetConfig" class="secondary">Ripristina config GitHub</button><button id="btnExportConfig" class="secondary">Esporta config.json</button></div>
+          <div id="configMessage" class="message hidden"></div>
+        </article>
+        <article class="card">
+          <h2>Pesi attuali</h2>
+          <div id="weightsPanel" class="weights"></div>
+          <hr>
+          <h3>Gestione dati</h3>
+          <p><strong>Nota:</strong> GitHub Pages è statico. Il browser non può scrivere da solo nel repository senza autenticazione. Per questo la versione semplice usa <code>localStorage</code> e permette di esportare/importare <code>storico.json</code>.</p>
+          <button id="btnResetHistory" class="danger">Ripristina storico originale GitHub</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>Tool locale • nessun dato viene inviato a un server da questa pagina.</footer>
+  <script src="app.js"></script>
+</body>
+</html>

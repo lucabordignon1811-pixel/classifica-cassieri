@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "source": "Conversione del Tool_Classifiche_Operatori_Bar_v16 / VBA v15",
+  "workstations": {
+    "CER_CON1": "Principale",
+    "CER_CON2": "Principale",
+    "CER_CON3": "Principale",
+    "CER_CON4": "Principale",
+    "CER_CON5": "Principale",
+    "CER_CON6": "Principale",
+    "CER_CON7": "Principale",
+    "CER_CON8": "Secondario",
+    "CER_CON9": "Secondario",
+    "CER_CON10": "Secondario",
+    "CER_CON11": "Secondario"
+  },
+  "keywords": {
+    "tematici": [
+      "michael",
+      "Mandalorian",
+      "Digital Circus",
+      "Master of Universe",
+      "super mario",
+      "scream",
+      "diavolo veste prada",
+      "il diavolo",
+      "avatar",
+      "figural bucket",
+      "tin bucket",
+      "special cup",
+      "steel cup",
+      "stell cup",
+      "Mortal Kombat",
+      "cup topper"
+    ],
+    "comboDoppio": [
+      "combo doppio",
+      "combo chipz doppio",
+      "doppio pepsi"
+    ],
+    "acque75": [
+      "acqua naturale 75 cl",
+      "acqua frizzante 75 cl",
+      "acqua naturale 75cl",
+      "acqua frizzante 75cl"
+    ],
+    "escludiUtente": [
+      "web",
+      "cell",
+      "carretto"
+    ],
+    "escludiWorkstation": [
+      "carret"
+    ],
+    "rigaProdotto": [
+      "pop",
+      "bibita",
+      "combo",
+      "menu",
+      "bucket",
+      "cup",
+      "acqua",
+      "nachos",
+      "hot dog",
+      "michael",
+      "super mario",
+      "scream",
+      "avatar",
+      "tin",
+      "stell",
+      "diavolo veste prada",
+      "il diavolo"
+    ]
+  },
+  "pesiStorico": {
+    "atv": 35,
+    "tematici100Pesati": 30,
+    "tematiciTotali": 10,
+    "volumeScontrini": 10,
+    "combo100Pesati": 5,
+    "continuita": 10,
+    "ritmo": 0
+  },
+  "soglie": {
+    "giorniTarget": 3,
+    "oreTarget": 20,
+    "scontriniTarget": 150,
+    "giorniMinValido": 3,
+    "oreMinValido": 12,
+    "scontriniMinValido": 120
+  }
+}
